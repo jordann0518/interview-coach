@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h1>Practice for the job you actually want</h1>
+  <p class="muted">Paste a job description. Get tailored interview questions.
+     Answer them. Get scored with feedback.</p>
+  <form action="{{ url_for('main.create_session') }}" method="post">
+    <label for="jd">Job description</label>
+    <textarea id="jd" name="job_description" rows="8" required
+      placeholder="Paste the internship posting here…"></textarea>
+    <button type="submit">Generate practice questions →</button>
+  </form>
+  {% if not ai_mode %}
+  <p class="muted small">⚠️ No <code>ANTHROPIC_API_KEY</code> set — running in
+     <strong>offline mode</strong> with a built-in question bank and rule-based
+     feedback. See README to enable AI.</p>
+  {% endif %}
+</section>
+
+<section>
+  <h2>Past sessions</h2>
+  {% if sessions %}
+  <ul class="session-list">
+    {% for s in sessions %}
+    <li>
+      <a href="{{ url_for('main.session_detail', session_id=s.id) }}">{{ s.title }}</a>
+      <span class="muted small">{{ s.created_at[:10] }} · {{ s.answered }}/{{ s.total }} answered</span>
+      {% if s.avg_score is not none %}
+      <span class="score-pill">{{ s.avg_score }}/10</span>
+      {% endif %}
+      <span class="mode-badge {{ s.mode }}">{{ s.mode }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="muted">No sessions yet — paste a job description above to start.</p>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h1>{{ session.title }}</h1>
+  <p class="muted small">{{ session.created_at[:16].replace('T', ' ') }} ·
+     mode: <span class="mode-badge {{ session.mode }}">{{ session.mode }}</span>
+     {% if session.avg_score is not none %}· average: <strong>{{ session.avg_score }}/10</strong>{% endif %}</p>
+  <details>
+    <summary>View job description</summary>
+    <pre class="jd">{{ session.job_description }}</pre>
+  </details>
+</section>
+
+{% for q in session.questions %}
+<section class="card question">
+  <p class="qtype">{{ q.qtype }}</p>
+  <h3>Q{{ loop.index }}. {{ q.text }}</h3>
+  {% if q.score is not none %}
+  <div class="result">
+    <p><strong>Score: {{ q.score }}/10</strong>
+       <span class="mode-badge {{ q.answer_mode }}">{{ q.answer_mode }}</span></p>
+    <p>{{ q.feedback }}</p>
+    <p><strong>💡 Tip:</strong> {{ q.tip }}</p>
+    <details>
+      <summary>Your answer</summary>
+      <p class="answer">{{ q.answer_text }}</p>
+    </details>
+  </div>
+  {% endif %}
+  <form action="{{ url_for('main.answer_question', question_id=q.id) }}" method="post">
+    <label for="a{{ q.id }}">{{ 'Improve your answer' if q.score is not none else 'Your answer' }}</label>
+    <textarea id="a{{ q.id }}" name="answer" rows="5" required
+      placeholder="Type your answer here…"></textarea>
+    <button type="submit">{{ 'Re-score' if q.score is not none else 'Submit & get scored' }}</button>
+  </form>
+</section>
+{% endfor %}
+
+<p><a href="{{ url_for('main.index') }}">← Back to all sessions</a></p>
+{% endblock %}

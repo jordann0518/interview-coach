@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Interview Coach</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header>
+    <a href="{{ url_for('main.index') }}" class="brand">🎯 Interview Coach</a>
+    <span class="mode-badge {{ 'ai' if ai_mode else 'offline' }}">
+      {{ 'AI mode' if ai_mode else 'Offline mode' }}
+    </span>
+  </header>
+  <main>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flashes">
+          {% for m in messages %}<p>{{ m }}</p>{% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer>
+    <p>Built by Jordan Nix · Practice for Summer 2027 internships</p>
+  </footer>
+</body>
+</html>
